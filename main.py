@@ -124,7 +124,7 @@ def move():
 
     next_hit_player = None
 
-
+    """
     for i in range(3):
         next_hit_player = other_player_found(other_players, copy_north_pos, copy_west_pos, copy_east_pos, copy_south_pos, self_player)
         if not next_hit_player:
@@ -246,10 +246,10 @@ def move():
     #   'wasHit': False,
     #   'score': -10
     # }
-
+    """
 
     # return moves[random.randrange(len(moves))]
-    # return 'T'
+    return 'T'
 
 if __name__ == "__main__":
     # app.run(debug=False,host='0.0.0.0',port=int(os.environ.get('PORT', 8080)))
