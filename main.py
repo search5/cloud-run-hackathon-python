@@ -33,6 +33,34 @@ def index():
     return "Let the battle begin!"
 
 
+def other_player_found(players, next_north_pos, next_west_pos, next_east_pos, next_south_pos, self_player):
+    # 공격 대상 저장
+    next_hit_player = None
+
+    # 현재 내 위치에 가까운 플레이어를 찾아낸다
+    for other_player in players:
+        # 반복 중인 플레이어 상태가 F이거나 T일때만 골라낸다.(아 그리고 공격한 다음에 도망간다!!! TODO-나몰랑 귀차나)
+        if (self_player['x'], next_north_pos) == (other_player['x'], other_player['y']):
+            # north 위치의 적 확인
+            next_hit_player = other_player
+            break
+        elif (next_west_pos, self_player['y']) == (other_player['x'], other_player['y']):
+            # west 위치의 적 확인
+            next_hit_player = other_player
+            break
+        elif (next_east_pos, self_player['y']) == (other_player['x'], other_player['y']):
+            # east 위치의 적 확인
+            next_hit_player = other_player
+            break
+        elif (self_player['x'], next_south_pos) == (other_player['x'], other_player['y']):
+            # south 위치의 적 확인
+            next_hit_player = other_player
+            break
+        else:
+            # 인접한 네 방향에 적이 없을 수 있다.(TODO)
+            pass
+    return next_hit_player
+
 @app.route("/", methods=['POST'])
 def move():
     # request.get_data()
@@ -53,11 +81,13 @@ def move():
 
     # 현재 내 위치에 가까운 플레이어가 누군지 찾기 위해 나의 위치와 플레이어 위치를 비교한다
     # (단, 네 방향으로 3칸 단위로 존재하는지 확인)
+
     ext_north_pos = self_player['y'] - 3
     ext_west_pos = self_player['x'] - 3
     ext_east_pos = self_player['x'] + 3
     ext_south_pos = self_player['y'] + 3
 
+    """
     def other_player_found(players, next_north_pos, next_west_pos, next_east_pos, next_south_pos):
         # 공격 대상 저장
         next_hit_player = None
@@ -65,27 +95,27 @@ def move():
         # 현재 내 위치에 가까운 플레이어를 찾아낸다
         for other_player in players:
             # 반복 중인 플레이어 상태가 F이거나 T일때만 골라낸다.(아 그리고 공격한 다음에 도망간다!!! TODO-나몰랑 귀차나)
-            if other_player['direction'] in ('F', 'T'):
-                if (self_player['x'], next_north_pos) == (other_player['x'], other_player['y']):
-                    # north 위치의 적 확인
-                    next_hit_player = other_player
-                    break
-                elif (next_west_pos, self_player['y']) == (other_player['x'], other_player['y']):
-                    # west 위치의 적 확인
-                    next_hit_player = other_player
-                    break
-                elif (next_east_pos, self_player['y']) == (other_player['x'], other_player['y']):
-                    # east 위치의 적 확인
-                    next_hit_player = other_player
-                    break
-                elif (self_player['x'], next_south_pos) == (other_player['x'], other_player['y']):
-                    # south 위치의 적 확인
-                    next_hit_player = other_player
-                    break
-                else:
-                    # 인접한 네 방향에 적이 없을 수 있다.(TODO)
-                    pass
+            if (self_player['x'], next_north_pos) == (other_player['x'], other_player['y']):
+                # north 위치의 적 확인
+                next_hit_player = other_player
+                break
+            elif (next_west_pos, self_player['y']) == (other_player['x'], other_player['y']):
+                # west 위치의 적 확인
+                next_hit_player = other_player
+                break
+            elif (next_east_pos, self_player['y']) == (other_player['x'], other_player['y']):
+                # east 위치의 적 확인
+                next_hit_player = other_player
+                break
+            elif (self_player['x'], next_south_pos) == (other_player['x'], other_player['y']):
+                # south 위치의 적 확인
+                next_hit_player = other_player
+                break
+            else:
+                # 인접한 네 방향에 적이 없을 수 있다.(TODO)
+                pass
         return next_hit_player
+    """
 
     copy_north_pos = ext_north_pos
     copy_west_pos = ext_west_pos
@@ -95,7 +125,7 @@ def move():
     next_hit_player = None
 
     for i in range(3):
-        next_hit_player = other_player_found(other_players, copy_north_pos, copy_west_pos, copy_east_pos, copy_south_pos)
+        next_hit_player = other_player_found(other_players, copy_north_pos, copy_west_pos, copy_east_pos, copy_south_pos, self_player)
         if not next_hit_player:
             # 공격자를 찾지 못하면... 한칸씩 줄여서 찾아본다.
             copy_north_pos -= 1
@@ -215,6 +245,7 @@ def move():
     #   'wasHit': False,
     #   'score': -10
     # }
+
 
     # return moves[random.randrange(len(moves))]
 
