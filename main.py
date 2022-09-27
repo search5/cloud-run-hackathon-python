@@ -203,9 +203,11 @@ def move():
             # 내가 이전했는지 아닌지 알려면.. 나의 직전 위치를 가지고 있어야 한다.. 하아.. 야이..
             if self_state['direction'] == next_direction and not self_state['finish']:
                 return 'F'
+            elif self_state['direction'] == next_direction and self_state['finish']:
+                self_state['finish'] = False
+                return moves[random.randrange(len(moves))]
             else:
                 return next_direction
-
     # {
     #   'x': 9,
     #   'y': 0,
