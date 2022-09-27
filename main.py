@@ -147,19 +147,18 @@ def move():
         warning_players = []
         for other_player in other_players:
             # 반복 중인 플레이어 상태가 F이거나 T일때만 골라낸다.
-            if other_player['direction'] in ('F', 'T'):
-                if (self_player['x'], ext_north_pos) == (other_player['x'], other_player['y']):
-                    # north 위치의 적 확인
-                    warning_players.append('N')
-                elif (ext_west_pos, self_player['y']) == (other_player['x'], other_player['y']):
-                    # west 위치의 적 확인
-                    warning_players.append('W')
-                elif (ext_east_pos, self_player['y']) == (other_player['x'], other_player['y']):
-                    # east 위치의 적 확인
-                    warning_players.append('E')
-                elif (self_player['x'], ext_south_pos) == (other_player['x'], other_player['y']):
-                    # south 위치의 적 확인
-                    warning_players.append('S')
+            if (self_player['x'], ext_north_pos) == (other_player['x'], other_player['y']):
+                # north 위치의 적 확인
+                warning_players.append('N')
+            elif (ext_west_pos, self_player['y']) == (other_player['x'], other_player['y']):
+                # west 위치의 적 확인
+                warning_players.append('W')
+            elif (ext_east_pos, self_player['y']) == (other_player['x'], other_player['y']):
+                # east 위치의 적 확인
+                warning_players.append('E')
+            elif (self_player['x'], ext_south_pos) == (other_player['x'], other_player['y']):
+                # south 위치의 적 확인
+                warning_players.append('S')
 
         if len(warning_players) == 4:
             return 'T'
