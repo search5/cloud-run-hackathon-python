@@ -106,6 +106,9 @@ def move():
 
     # 벽에 부딪친 경우 상정해서 방향 전환할 위치 담아둠
     wall_attacked_direction = ['N', 'W', 'S', 'E']
+
+    # 적들의 위치값만 담아둔다.
+    players_pos = [(player['x'], player['y']) for player in other_players]
     
     # 내가 공격 당한 경우 F를 반환해 일단 이탈한다.
     if self_player['wasHit']:
@@ -115,6 +118,19 @@ def move():
             return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
         elif dims[1] == self_player['y']:
             return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
+        # 플레이어 전진 방향에 적이 있으면 방향을 전환해야 한다.
+        if self_player['direction'] == 'N':
+            if (self_player['x'], self_player['y'] - 1) in players_pos:
+                return ('L', 'R')[random.randrange(2)]
+        elif self_player['direction'] == 'S':
+            if (self_player['x'], self_player['y'] + 1) in players_pos:
+                return ('L', 'R')[random.randrange(2)]
+        elif self_player['direction'] == 'W':
+            if (self_player['x'] - 1, self_player['y']) in players_pos:
+                return ('L', 'R')[random.randrange(2)]
+        elif self_player['direction'] == 'E':
+            if (self_player['x'] + 1, self_player['y']) in players_pos:
+                return ('L', 'R')[random.randrange(2)]
         return 'F'
 
     # 현재 내가 위치한 방향으로 공격 대상이 있는지 확인한다(이게 속편할듯)
