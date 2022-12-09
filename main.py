@@ -111,6 +111,7 @@ def move():
     players_pos = [(player['x'], player['y']) for player in other_players]
     
     # 내가 공격 당한 경우 F를 반환해 일단 이탈한다.
+    """
     if self_player['wasHit']:
         # 단, 플레이어의 위치가 벽에 부딪친 경우 방향 전환을 한다.
         wall_attacked_direction.remove(self_player['direction'])
@@ -132,8 +133,10 @@ def move():
             if (self_player['x'] + 1, self_player['y']) in players_pos:
                 return ('L', 'R')[random.randrange(2)]
         return 'F'
+    """
 
     # 현재 내가 위치한 방향으로 공격 대상이 있는지 확인한다(이게 속편할듯)
+    """
     for other_player in other_players:
         # 플레이어를 반복한다
         if other_player['x'] == self_player['x']: # 같은 x축에 있는 적만 발견한다.
@@ -172,6 +175,7 @@ def move():
                 return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
             
             return 'F'
+    """
 
     """
     def other_player_found(players, next_north_pos, next_west_pos, next_east_pos, next_south_pos):
@@ -334,7 +338,7 @@ def move():
     # }
     """
 
-    # return moves[random.randrange(len(moves))]
+    return moves[random.randrange(len(moves))]
     # return 'T'
 
 if __name__ == "__main__":
