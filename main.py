@@ -75,9 +75,18 @@ def move():
 
     self_state.update({'x': self_player['x'],
                        'y': self_player['y'],
-                       'direction': self_player['direction']})
+                       'direction': self_player['direction'],
+                       'wasHit': self_player['wasHit']})
 
-    # F <- move Forward, R <- turn Right, L <- turn Left, T <- Throw
+    # 리턴해야 하는 값: F <- move Forward, R <- turn Right, L <- turn Left, T <- Throw
+    # 남의 위치: N, W, E, S
+
+    # N -> 정방향에서 L을 반환하면 W(est), R을 반환하면 E(ast) 프로필 사진 각도 변환
+    # W -> 서쪽(머리가 서쪽)에서 L을 반환하면 S(outh), R을 반환하면 N(orth) 프로필 사진 각도 변환
+    # S -> 남쪽(머리가 남쪽)에서 L을 반환하면 E(ast), R을 반환하면 W(est) 각도 변경
+    # E -> 동쪽(머리가 동쪽)에서 L을 반환하면 N(orth), R을 반환하면 S(outh) 각도 변경
+
+    # 직전 각도 상태에서 F를 반환하면 그 방향으로 이동
 
     # 현재 내 위치에 가까운 플레이어가 누군지 찾기 위해 나의 위치와 플레이어 위치를 비교한다
     # (단, 네 방향으로 3칸 단위로 존재하는지 확인)
@@ -86,6 +95,67 @@ def move():
     ext_west_pos = self_player['x'] - 3
     ext_east_pos = self_player['x'] + 3
     ext_south_pos = self_player['y'] + 3
+
+    # 적이 어디에 있는가?(N, W, S, E 순으로 찾아서 찾으면 그 방향으로 방향을 전환한다)
+    # 대상이 있다고 보고 방향이 전환되고 나면 T를 반환한다.
+    # 대상이 없을 경우 F를 반환한다
+    # 단, 벽에 부딪친 경우 방향을 전환 후 F를 입력한다.(dims 가지고 판단)
+
+    # 변경할 각도를 담아놓는다(반시계 방향)
+    move_direction = {'N': 'W', 'W': 'S', 'S': 'E', 'E': 'N'}
+
+    # 벽에 부딪친 경우 상정해서 방향 전환할 위치 담아둠
+    wall_attacked_direction = ['N', 'W', 'S', 'E']
+    
+    # 내가 공격 당한 경우 F를 반환해 일단 이탈한다.
+    if self_player['wasHit']:
+        # 단, 플레이어의 위치가 벽에 부딪친 경우 방향 전환을 한다.
+        wall_attacked_direction.remove(self_player['direction'])
+        if dims[0] == self_player['x']:
+            return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
+        elif dims[1] == self_player['y']:
+            return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
+        return 'F'
+
+    # 현재 내가 위치한 방향으로 공격 대상이 있는지 확인한다(이게 속편할듯)
+    for other_player in other_players:
+        # 플레이어를 반복한다
+        if other_player['x'] == self_player['x']: # 같은 x축에 있는 적만 발견한다.
+            # 상대 플레이어가 유효 공격 범위에 있는지 확인한다.
+            valid_attack_south_range = range(self_player['y'], self_player['y'] + 3)
+            valid_attack_north_range = range(self_player['y'], self_player['y'] - 3)
+
+            if other_player['y'] in valid_attack_south_range:
+                if self_player['direction'] != 'S':
+                    return move_direction[self_player['direction']]
+                return 'T'
+            elif other_player['y'] in valid_attack_north_range:
+                if self_player['direction'] != 'N':
+                    return move_direction[self_player['direction']]
+                return 'T'
+        elif other_player['y'] == self_player['y']: # x축에서 적을 찾지 못한 경우 같은 y축에 있는 적만 발견한다.
+            # 상대 플레이어가 유효 공격 범위에 있는지 확인한다.
+            valid_attack_east_range = range(self_player['x'], self_player['x'] + 3)
+            valid_attack_west_range = range(self_player['x'], self_player['x'] - 3)
+
+            if other_player['x'] in valid_attack_east_range:
+                if self_player['direction'] != 'E':
+                    return move_direction[self_player['direction']]
+                return 'T'
+            elif other_player['x'] in valid_attack_west_range:
+                if self_player['direction'] != 'W':
+                    return move_direction[self_player['direction']]
+                return 'T'
+        else:
+            # 적을 찾지 못한 경우 이동해야 한다.
+            # 단, 플레이어의 위치가 벽에 부딪친 경우 방향 전환을 한다.
+            wall_attacked_direction.remove(self_player['direction'])
+            if dims[0] == self_player['x']:
+                return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
+            elif dims[1] == self_player['y']:
+                return wall_attacked_direction[random.randrange(len(wall_attacked_direction))]
+            
+            return 'F'
 
     """
     def other_player_found(players, next_north_pos, next_west_pos, next_east_pos, next_south_pos):
@@ -248,7 +318,7 @@ def move():
     # }
     """
 
-    return moves[random.randrange(len(moves))]
+    # return moves[random.randrange(len(moves))]
     # return 'T'
 
 if __name__ == "__main__":
